@@ -189,7 +189,6 @@ button:focus {
   line-height: 16px;
 }
 
-
 .stats {
   flex-shrink: 0;
   display: flex;
