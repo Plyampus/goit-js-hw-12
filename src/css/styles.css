@@ -1,102 +1,95 @@
-@import 'node_modules/modern-normalize/modern-normalize.css';
-
 body {
   font-family: 'Montserrat', sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;
   letter-spacing: 0.04em;
-
   color: #2e2f42;
   background-color: #ffffff;
 }
 
-ul {
+ul,
+ol {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.form {
-  margin-top: 36px;
-  text-align: center;
-}
-
-.gallery {
-  display: flex;
-  flex-wrap: wrap;
-  width: 1128px;
-  margin: auto;
-  margin-top: 32px;
-  gap: 24px;
-}
-
-.form-button {
-  width: 95px;
-  height: 40px;
-
-  font-family: 'Montserrat', sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 24px;
-  letter-spacing: 0.04em;
-
-  color: #ffffff;
-  background-color: #4e75ff;
-
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: none;
+a {
+  text-decoration: none;
   cursor: pointer;
 }
 
-.form-button:hover {
-  background-color: #6c8cff;
+img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
 }
 
-.form-input {
-  width: 271px;
+.form {
+  width: 371px;
   height: 40px;
-  padding: 8px 16px;
+  text-align: center;
+  margin-top: 36px;
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  margin-right: auto;
+}
 
-  font: inherit;
-
+input {
   border: 1px solid #808080;
   border-radius: 4px;
+  width: 272px;
+  padding-left: 16px;
+}
+
+input:hover {
+  border: 1px solid #000;
+}
+
+input:focus {
+  padding-left: 16px;
+  border: 1px solid #4e75ff;
   outline: none;
 }
 
-.gallery-item {
-  width: 360px;
-  border: 1px solid #808080;
+input::placeholder {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: #808080;
+  padding-left: 16px;
 }
 
-.gallery-link {
-  font: inherit;
-  color: currentColor;
-  text-decoration: none;
+input:focus::placeholder {
+  transform: translateX(-16px);
 }
 
-.gallery-img {
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  width: 91px;
+  color: #fff;
+  background: #4e75ff;
+}
+
+button:hover,
+button:focus {
+  background-color: #6c8cff;
+}
+
+.load-more-button {
+  width: 125px;
+  height: 40px;
   display: block;
-  max-width: 100%;
-}
-
-.gallery-descript {
-  display: flex;
-  padding: 4px 20px;
-  justify-content: space-between;
-}
-
-.gallery-descript__item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.gallery-descript__span {
-  font-weight: 600;
-  line-height: 16px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 32px;
+  margin-bottom: 44px;
 }
 
 .loader {
@@ -127,4 +120,71 @@ ul {
 .is-hidden {
   opacity: 0;
   visibility: hidden;
+}
+
+.container {
+  display: flex;
+  margin: 0 auto;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  width: 1128px;
+  margin: auto;
+  margin-top: 32px;
+  gap: 24px;
+}
+
+.gallery-item {
+  width: 360px;
+  overflow: hidden;
+  border: 1px solid #808080;
+}
+
+.gallery-item img {
+  width: 360px;
+  height: 152px;
+  object-fit: cover; /* Заповнює контейнер, обрізаючи зайве */
+}
+
+.gallery-img {
+  display: block;
+  max-width: 100%;
+}
+
+.gallery-descript {
+  display: flex;
+  padding: 4px 20px;
+  justify-content: space-between;
+}
+
+.gallery-descript__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gallery-descript__span {
+  font-weight: 600;
+  line-height: 16px;
+}
+
+.stats {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-around;
+  background: #fff;
+  padding-bottom: 11px;
+  max-height: 48px;
+}
+
+.text {
+  text-align: center;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.33;
+  letter-spacing: 0.04em;
+  color: #2e2f42;
+  padding-bottom: 11px;
 }

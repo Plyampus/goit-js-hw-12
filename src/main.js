@@ -1,51 +1,109 @@
-import SimpleLightbox from 'simplelightbox';
-import 'simplelightbox/dist/simple-lightbox.min.css';
-import iziToast from 'izitoast';
-import 'izitoast/dist/css/iziToast.min.css';
-import { getImage } from './js/pixabay-api';
-import { imagesTemplate } from './js/render-functions';
+import axios from "axios";
+import iziToast from "izitoast";
+import "izitoast/dist/css/iziToast.min.css";
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 
-const formEl = document.querySelector('.form');
-const listEl = document.querySelector('.gallery');
-const divEl = document.querySelector('.loader');
+import { getImages } from "./js/pixabay-api.js";
+import { imagesTemplate } from "./js/render-functions.js";
 
-formEl.addEventListener('submit', event => {
-  event.preventDefault();
-  listEl.innerHTML = '';
-  const value = event.target.elements.value.value;
 
-  if (value.trim()) {
-    divEl.classList.remove('is-hidden');
-    getImage(value)
-      .then(data => {
-        if (!data.hits.length) {
-          iziToast.error({ title: 'Error', message: 'Sorry, there are no images matching your search query. Please try again!', });
+export const lightbox = new SimpleLightbox('.gallery-link', {
+    captionsData: "alt",
+    captionDelay: 250,
+});
+
+export const refs = {
+    form: document.querySelector(".form"),
+    searchInput: document.getElementById("searchInput"),
+    searchBtn: document.querySelector("button"),
+    loadBtn: document.querySelector(".load-more-button"),
+    loader: document.querySelector(".loader"),
+    gallery: document.querySelector(".gallery"),
+}
+
+
+export let value = "";
+export let currentPage = 1;
+export let pageLimit = 30;
+
+hideLoader();
+hideLoadBtn();
+
+refs.form.addEventListener("submit", async event => {
+    event.preventDefault();
+    currentPage = 1;
+    refs.gallery.innerHTML = "";
+    value = refs.searchInput.value.trim();
+    if (value !== '') {
+        try {
+            const data = await getImages(value, currentPage);
+            const maxPage = Math.ceil(data.totalHits / pageLimit);
+            imagesTemplate(data);
+            hideLoader();
+            if (currentPage >= maxPage) {
+                hideLoadBtn();
+            } else {
+                showLoadBtn();
+            }
+        } catch (error) {
+            console.log(error);
+            displayMessage("An error occurred while fetching data.");
+            hideLoadBtn();
         }
-        const markup = imagesTemplate(data.hits);
-        listEl.insertAdjacentHTML('afterbegin', markup);
-        divEl.classList.add('is-hidden');
-      })
-      .then(() => {
-        const lightbox = new SimpleLightbox('.gallery a', { captionsData: 'alt', captionDelay: 250, });
-      })
-      .catch(error => alert('Error: ' + error.message));
-  } else {
-    iziToast.error({ title: 'Error', message: 'The search field is empty. Please try again!', });
-  }
-
-  try {
-    const inputValue = event.target.elements.value.value;
-    if (!inputValue.trim()) {
-      throw new Error('Field input cannot be empty.');
+    } else {
+        displayMessage("Empty field!");
+        hideLoadBtn();
     }
-  } catch (error) {
-    alert('Error occurred: ' + error.message);
-  }
-
-  formEl.reset();
+    refs.form.reset();
+});
+refs.loadBtn.addEventListener("click", async onLoadMoreClick => {
+    currentPage += 1;
+    try {
+        const data = await getImages(value, currentPage);
+        hideLoader();
+        imagesTemplate(data);
+        showLoadBtn();
+        const item = document.querySelector(".gallery-item");
+        const rect = item.getBoundingClientRect();
+        window.scrollBy({
+            top: rect.height * 2,
+            behavior: "smooth",
+        })
+        const maxPage = Math.ceil(data.totalHits / pageLimit);
+        if (currentPage >= maxPage) {
+            hideLoadBtn();
+        }
+    } catch (error) {
+        console.log(error);
+        displayMessage("An error occurred while fetching data.");
+        hideLoadBtn();
+    }
 });
 
-window.addEventListener('offline', () => {
-  alert('Втрата з\'єднання з Інтернетом.');
-  // Додаткові дії, якщо потрібно
-});
+
+export function displayMessage(message) {
+    iziToast.error({
+        title: 'Error',
+        message: message,
+        position: "topRight",
+        backgroundColor: "red",
+    });
+}
+
+export function hideLoader() {
+    refs.loader.style.display = "none";
+}
+
+export function showLoader() {
+    refs.loader.style.display = "block";
+}
+
+function hideLoadBtn() {
+    refs.loadBtn.style.display = "none";
+}
+
+function showLoadBtn() {
+    refs.loadBtn.style.display = "block";    
+}
+

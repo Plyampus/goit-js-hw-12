@@ -1,32 +1,33 @@
-function imageTemplate(data) {
-  const {
-    largeImageURL,
-    webformatURL,
-    tags,
-    likes,
-    views,
-    comments,
-    downloads,
-  } = data;
-  return `<li class="gallery-item">
-	<a class="gallery-link" href="${largeImageURL}">
-		<img
-            src="${webformatURL}"
-            alt="${tags}"
-            width="360"
-            height="200"
-            class="gallery-img"
-        />
-        <ul class="gallery-descript">
-        <li class="gallery-descript__item"><span class="gallery-descript__span">likes</span> ${likes}</li>
-        <li class="gallery-descript__item"><span class="gallery-descript__span">Views</span> ${views}</li>
-        <li class="gallery-descript__item"><span class="gallery-descript__span">Coments</span> ${comments}</li>
-        <li class="gallery-descript__item"><span class="gallery-descript__span">Dowloads</span> ${downloads}</li>
-     </ul>
-	</a>
-</li>`;
-}
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
-export function imagesTemplate(arr) {
-  return arr.map(imageTemplate).join('');
+import { refs, lightbox, displayMessage } from '../main';
+
+
+export function imagesTemplate(data) {
+    if (data.hits.length === 0) {
+        displayMessage(
+        'Sorry, there are no images matching your search query. Please try again!'
+        );
+    } else {
+        const images = data.hits;
+
+        const markup = images.map(image => 
+            `<li class="gallery-item">
+                <a class="gallery-link" href="${image.largeImageURL}">
+                <img loading="lazy" class="gallery-image" src="${image.webformatURL}" alt="${image.tags}" />
+                </a>
+                <div class="stats">
+                    <p class="text">Likes<br/>${image.likes}</p>
+                    <p class="text">Views<br/>${image.views}</p>
+                    <p class="text">Comments<br/>${image.comments}</p>
+                    <p class="text">Downloads<br/>${image.downloads}</p>
+                </div>
+            </li>`).join('');
+
+    refs.gallery.insertAdjacentHTML('beforeend', markup);
+    lightbox.refresh();
+    }
 }
