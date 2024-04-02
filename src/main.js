@@ -107,3 +107,8 @@ function showLoadBtn() {
     refs.loadBtn.style.display = "block";    
 }
 
+window.addEventListener('offline', () => {
+    alert('Втрата з\'єднання з Інтернетом.');
+    // Додаткові дії, якщо потрібно
+  });
+

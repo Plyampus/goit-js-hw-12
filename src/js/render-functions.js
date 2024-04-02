@@ -20,10 +20,10 @@ export function imagesTemplate(data) {
                 <img loading="lazy" class="gallery-image" src="${image.webformatURL}" alt="${image.tags}" />
                 </a>
                 <div class="stats">
-                    <p class="text">Likes<br/>${image.likes}</p>
-                    <p class="text">Views<br/>${image.views}</p>
-                    <p class="text">Comments<br/>${image.comments}</p>
-                    <p class="text">Downloads<br/>${image.downloads}</p>
+                    <p class="text"><span class="text__span">likes</span><br/>${image.likes}</p>
+                    <p class="text"><span class="text__span">Views</span><br/>${image.views}</p>
+                    <p class="text"><span class="text__span">Coments</span><br/>${image.comments}</p>
+                    <p class="text"><span class="text__span">Dowloads</span><br/>${image.downloads}</p>
                 </div>
             </li>`).join('');
 
