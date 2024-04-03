@@ -34,14 +34,14 @@ function isOnline() {
     return window.navigator.onLine;
 };
 
-let messageDisplayed = false; // Declare the flag here
+let messageDisplayed = false;
 
 refs.form.addEventListener("submit", async event => {
     event.preventDefault();
     currentPage = 1;
     refs.gallery.innerHTML = "";
     value = refs.searchInput.value.trim();
-    messageDisplayed = false; // Reset the flag here
+    messageDisplayed = false;
     if (value !== '') {
         if (!isOnline()) {
             displayMessage("Internet connection is lost. Please check your connection.");
@@ -70,6 +70,10 @@ refs.form.addEventListener("submit", async event => {
     refs.form.reset();
 });
 refs.loadBtn.addEventListener("click", async onLoadMoreClick => {
+    if (!isOnline()) {
+        displayMessage("Internet connection is lost. Please check your connection.");
+        return;
+    }
     if (currentPage * pageLimit >= totalHits) {
         if (!messageDisplayed) {
             displayMessage("No more images to load.");
@@ -91,6 +95,10 @@ refs.loadBtn.addEventListener("click", async onLoadMoreClick => {
         })
         const maxPage = Math.ceil(totalHits / pageLimit);
         if (currentPage >= maxPage) {
+            if (!isOnline()) {
+                displayMessage("Internet connection is lost. Please check your connection.");
+                return;
+            }
             hideLoadBtn();
         }
     } catch (error) {
