@@ -3,7 +3,6 @@ import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css";
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
-
 import { getImages } from "./js/pixabay-api.js";
 import { imagesTemplate } from "./js/render-functions.js";
 
@@ -31,6 +30,10 @@ export let totalHits = 0;
 hideLoader();
 hideLoadBtn();
 
+function isOnline() {
+    return window.navigator.onLine;
+};
+
 let messageDisplayed = false; // Declare the flag here
 
 refs.form.addEventListener("submit", async event => {
@@ -40,6 +43,10 @@ refs.form.addEventListener("submit", async event => {
     value = refs.searchInput.value.trim();
     messageDisplayed = false; // Reset the flag here
     if (value !== '') {
+        if (!isOnline()) {
+            displayMessage("Internet connection is lost. Please check your connection.");
+            return;
+        }
         try {
             const data = await getImages(value, currentPage);
             totalHits = data.totalHits;
@@ -104,7 +111,7 @@ export function displayMessage(message) {
         position: "topRight",
         backgroundColor: "red",
     });
-    
+
     if (message === "No more images to load.") {
         messageDisplayed = true;
     }
@@ -123,7 +130,7 @@ function hideLoadBtn() {
 }
 
 function showLoadBtn() {
-    refs.loadBtn.style.display = "block";    
+    refs.loadBtn.style.display = "block";
 }
 
 window.addEventListener('scroll', () => {
