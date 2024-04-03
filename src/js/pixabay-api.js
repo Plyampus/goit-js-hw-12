@@ -7,7 +7,7 @@ const myAxios = axios.create ({
 
 export async function getImages() {
     const params = {
-        key: "43015885-c3997a91f23585149f1baaf72",
+        key: "3539379-d64fd5a5897018ff1512b690c",
         q: value,
         per_page: pageLimit,
         page: currentPage,
