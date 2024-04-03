@@ -25,20 +25,25 @@ export const refs = {
 
 export let value = "";
 export let currentPage = 1;
-export let pageLimit = 30;
+export let pageLimit = 15;
+export let totalHits = 0;
 
 hideLoader();
 hideLoadBtn();
+
+let messageDisplayed = false; // Declare the flag here
 
 refs.form.addEventListener("submit", async event => {
     event.preventDefault();
     currentPage = 1;
     refs.gallery.innerHTML = "";
     value = refs.searchInput.value.trim();
+    messageDisplayed = false; // Reset the flag here
     if (value !== '') {
         try {
             const data = await getImages(value, currentPage);
-            const maxPage = Math.ceil(data.totalHits / pageLimit);
+            totalHits = data.totalHits;
+            const maxPage = Math.ceil(totalHits / pageLimit);
             imagesTemplate(data);
             hideLoader();
             if (currentPage >= maxPage) {
@@ -58,6 +63,13 @@ refs.form.addEventListener("submit", async event => {
     refs.form.reset();
 });
 refs.loadBtn.addEventListener("click", async onLoadMoreClick => {
+    if (currentPage * pageLimit >= totalHits) {
+        if (!messageDisplayed) {
+            displayMessage("No more images to load.");
+            messageDisplayed = true;
+        }
+        return;
+    }
     currentPage += 1;
     try {
         const data = await getImages(value, currentPage);
@@ -70,7 +82,7 @@ refs.loadBtn.addEventListener("click", async onLoadMoreClick => {
             top: rect.height * 2,
             behavior: "smooth",
         })
-        const maxPage = Math.ceil(data.totalHits / pageLimit);
+        const maxPage = Math.ceil(totalHits / pageLimit);
         if (currentPage >= maxPage) {
             hideLoadBtn();
         }
@@ -83,12 +95,19 @@ refs.loadBtn.addEventListener("click", async onLoadMoreClick => {
 
 
 export function displayMessage(message) {
+    if (message === "No more images to load." && messageDisplayed) {
+        return;
+    }
     iziToast.error({
-        title: 'Error',
+        title: '',
         message: message,
         position: "topRight",
         backgroundColor: "red",
     });
+    
+    if (message === "No more images to load.") {
+        messageDisplayed = true;
+    }
 }
 
 export function hideLoader() {
@@ -107,8 +126,12 @@ function showLoadBtn() {
     refs.loadBtn.style.display = "block";    
 }
 
-window.addEventListener('offline', () => {
-    alert('Втрата з\'єднання з Інтернетом.');
-    // Додаткові дії, якщо потрібно
-  });
-
+window.addEventListener('scroll', () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        if (currentPage * pageLimit >= totalHits && !messageDisplayed) {
+            displayMessage("No more images to load.");
+            messageDisplayed = true;
+            return;
+        }
+    }
+});
